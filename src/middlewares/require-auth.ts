@@ -8,7 +8,7 @@ import { NotAuthorizedError } from "../errors/not-authorized-error";
 export const requireAuth = (req : Request, res: Response, next : NextFunction) => {
 
   if (! req.currentUser ) {
-    throw new NotAuthorizedError('Not allowed to access this URI');
+    throw new NotAuthorizedError('Not authorized to access this URI');
   };
 
   next();
