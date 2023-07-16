@@ -6,7 +6,7 @@ interface Event {
   data: any;
 }
 
-export abstract class listener<T extends Event> {
+export abstract class Listener<T extends Event> {
   abstract subject: T['subject'];
   abstract onMessage(data: T['data'], msg: Message) : void;
   abstract queueGroupName: string;
