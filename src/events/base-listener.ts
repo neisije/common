@@ -1,4 +1,4 @@
-import { Message , Stan } from 'node-nats-streaming';
+import { Message, Stan } from 'node-nats-streaming';
 import { Subjects } from './subjects';
 
 interface Event {
@@ -8,10 +8,10 @@ interface Event {
 
 export abstract class Listener<T extends Event> {
   abstract subject: T['subject'];
-  abstract onMessage(data: T['data'], msg: Message) : void;
   abstract queueGroupName: string;
-  protected ackWait : number = 5 * 1000;
-  protected client : Stan;
+  abstract onMessage(data: T['data'], msg: Message): void;
+  protected client: Stan;
+  protected ackWait = 5 * 1000;
 
   constructor(client: Stan) {
     this.client = client;
@@ -20,27 +20,25 @@ export abstract class Listener<T extends Event> {
   subscriptionOptions() {
     return this.client
       .subscriptionOptions()
-      .setManualAckMode(true)
       .setDeliverAllAvailable()
+      .setManualAckMode(true)
       .setAckWait(this.ackWait)
       .setDurableName(this.queueGroupName);
   }
 
   listen() {
-      const options = this.subscriptionOptions()
-      const subscription = this.client.subscribe(
-        this.subject, 
-        this.queueGroupName, 
-        this.subscriptionOptions()
-      );
+    const subscription = this.client.subscribe(
+      this.subject,
+      this.queueGroupName,
+      this.subscriptionOptions()
+    );
 
-      subscription.on('message', (msg: Message) => {
+    subscription.on('message', (msg: Message) => {
+      console.log(`Message received: ${this.subject} / ${this.queueGroupName}`);
 
-        const parsedData = this.parseMessage(msg);
-        const msgLog = JSON.stringify(parsedData);
-        console.log(`Message Received (common lib): ${this.subject} : ${msgLog}`);
-        this.onMessage(parsedData, msg);
-      });
+      const parsedData = this.parseMessage(msg);
+      this.onMessage(parsedData, msg);
+    });
   }
 
   parseMessage(msg: Message) {
@@ -49,5 +47,4 @@ export abstract class Listener<T extends Event> {
       ? JSON.parse(data)
       : JSON.parse(data.toString('utf8'));
   }
-
 }
