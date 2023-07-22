@@ -21,7 +21,7 @@ export abstract class Publisher<T extends Event> {
           return reject(err);
         } else {
           const msg = JSON.stringify(data);
-          console.log(`Message Published (common lib): ${this.subject} / ${msg}`);
+          console.log(`Message Published (common lib): ${this.subject} : ${msg}`);
           resolve();
         }
       });
