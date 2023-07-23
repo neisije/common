@@ -4,7 +4,7 @@ export enum OrderStatus {
 
   // the ticket the order is trying to reserve has already been reserved.
   // or when the user has cancelled the order
-  // The order has expired before payment
+  // or the order has expired before payment
   Cancelled = 'cancelled',
 
   // The order has successfully reserved the ticket 
